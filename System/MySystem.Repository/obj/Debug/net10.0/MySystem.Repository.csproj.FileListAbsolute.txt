@@ -1,0 +1,23 @@
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\bin\Debug\net10.0\MySystem.Repository.deps.json
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\bin\Debug\net10.0\MySystem.Repository.runtimeconfig.json
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\bin\Debug\net10.0\MySystem.Repository.dll
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\bin\Debug\net10.0\MySystem.Repository.pdb
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.csproj.AssemblyReference.cache
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.AssemblyInfoInputs.cache
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.AssemblyInfo.cs
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.dll
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\refint\MySystem.Repository.dll
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.pdb
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\MySystem.Repository.genruntimeconfig.cache
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\ref\MySystem.Repository.dll
+C:\Users\Admin\Downloads\My System\System\MySystem.Repository\obj\Debug\net10.0\EFCoreNpgsqlPgvector.cs
+C:\Temp\mysystem-api-build\MySystem.Repository.deps.json
+C:\Temp\mysystem-api-build\MySystem.Repository.runtimeconfig.json
+C:\Temp\mysystem-api-build\MySystem.Repository.dll
+C:\Temp\mysystem-api-build\MySystem.Repository.pdb
+C:\Temp\mysystem-api-build-2\MySystem.Repository.deps.json
+C:\Temp\mysystem-api-build-2\MySystem.Repository.runtimeconfig.json
+C:\Temp\mysystem-api-build-2\MySystem.Repository.dll
+C:\Temp\mysystem-api-build-2\MySystem.Repository.pdb

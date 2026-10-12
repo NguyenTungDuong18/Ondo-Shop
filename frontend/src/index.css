@@ -1,0 +1,415 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import "tailwindcss";
+/* The app toggles the .dark class on <html>; make every dark: utility follow it. */
+@custom-variant dark (&:where(.dark, .dark *));
+@import "./styles/theme.css";
+
+/* ============================================================
+   ONDA STUDIO — GLOBAL STYLES
+   theme.css contains all design tokens
+   ============================================================ */
+
+@layer base {
+  body {
+    background-color: var(--surface-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+  }
+
+  h1, h2, .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* â”€â”€ Custom component classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.font-serif-hero {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.replit-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.replit-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.replit-btn-black {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--btn-primary-bg);
+  transition: all 0.2s ease;
+}
+
+.replit-btn-black:hover {
+  background-color: var(--btn-primary-bg-hover);
+  border-color: var(--btn-primary-bg-hover);
+  transform: translateY(-1px);
+}
+
+.replit-btn-outline {
+  background-color: var(--btn-outline-bg);
+  color: var(--btn-outline-text);
+  border: 1px solid var(--btn-outline-border);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+}
+
+.replit-btn-outline:hover {
+  background-color: var(--btn-outline-bg-hover);
+  border-color: var(--btn-outline-border-hover);
+}
+
+.replit-input {
+  background-color: var(--surface-input);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.replit-input::placeholder {
+  color: var(--text-muted);
+}
+
+.replit-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+.dark .replit-input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+
+.nike-input {
+  background-color: var(--surface-input);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.dark .nike-input {
+  border-color: var(--border-default);
+}
+
+.nike-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Color Inversion Light Beam Sweep Effect - 100% Seamless Continuous 2-Pass Flow */
+@keyframes seamlessDoublePass {
+  0% {
+    transform: translateX(-101%);
+  }
+  6% {
+    transform: translateX(-110%);
+  }
+  28% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(101%);
+  }
+  50.01% {
+    transform: translateX(-101%);
+  }
+  78% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes seamlessTextInvert {
+  0% {
+    color: #ffffff;
+  }
+  6% {
+    color: #ffffff;
+  }
+  28% {
+    color: #09090b;
+  }
+  50% {
+    color: #ffffff;
+  }
+  78% {
+    color: #09090b;
+  }
+  100% {
+    color: #ffffff;
+  }
+}
+
+@keyframes buttonAnticipationFloat {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    transform: translateY(1.5px) scale(0.988);
+  }
+  50% {
+    transform: translateY(-3.5px) scale(1);
+  }
+  100% {
+    transform: translateY(-3px) scale(1);
+  }
+}
+
+.btn-spotlight-sweep {
+  position: relative;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 2px solid var(--btn-primary-bg);
+  border-radius: var(--dm-radius);
+  z-index: 1;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease;
+}
+
+.btn-spotlight-sweep::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  transform: translateX(-101%);
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.btn-spotlight-sweep:hover {
+  animation: buttonAnticipationFloat 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.35);
+  border-color: #09090b;
+}
+
+.btn-spotlight-sweep:hover::before {
+  animation: seamlessDoublePass 2.4s cubic-bezier(0.22, 1, 0.36, 1) 1 forwards;
+}
+
+.btn-spotlight-sweep > * {
+  position: relative;
+  z-index: 2;
+  transition: color 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-spotlight-sweep:hover > * {
+  animation: seamlessTextInvert 2.4s cubic-bezier(0.22, 1, 0.36, 1) 1 forwards !important;
+}
+
+.btn-border-sweep {
+  position: relative;
+  background-color: #09090b;
+  color: #ffffff;
+  border: 1px solid #18181b;
+  border-radius: var(--radius);
+  z-index: 1;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-border-sweep::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.btn-border-sweep::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2.5px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 3;
+}
+
+.btn-border-sweep:hover::before {
+  left: 100%;
+}
+
+.btn-border-sweep:hover::after {
+  width: 100%;
+}
+
+.btn-border-sweep:hover {
+  background-color: #18181b;
+  border-color: #3b82f6;
+  box-shadow: 0 10px 25px -8px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Gentle Drop-Down & Blur-to-Clear Animation */
+@keyframes dropdownDrop {
+  0% {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-14px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown-drop {
+  animation: dropdownDrop 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Thin Tapered Pointed Underline Fast Sweep Animation */
+.underline-taper-line {
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: #09090b;
+  clip-path: polygon(0% 50%, 6% 0%, 94% 0%, 100% 50%, 94% 100%, 6% 100%);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+/* Smooth Silky Fade-in-up Grid Animation */
+@keyframes smoothGridFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-smooth-grid {
+  animation: smoothGridFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Card Staggered Blur & Upward Motion Animation */
+@keyframes cardBlurCascade {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(28px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
+.animate-card-blur-cascade {
+  animation: cardBlurCascade 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Account menu opens from the avatar like a small window hinged at its top-right corner. */
+@keyframes userMenuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96) rotate(1.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-user-menu {
+  transform-origin: top left;
+  animation: userMenuOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
