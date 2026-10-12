@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="MySystem.API/MySystem.API.csproj" />
-  <Project Path="MySystem.Repository/MySystem.Repository.csproj" />
-  <Project Path="MySystem.Service/MySystem.Service.csproj" />
+  <Project Path="src/MySystem.API/MySystem.API.csproj" />
+  <Project Path="src/MySystem.Repository/MySystem.Repository.csproj" />
+  <Project Path="src/MySystem.Service/MySystem.Service.csproj" />
 </Solution>
