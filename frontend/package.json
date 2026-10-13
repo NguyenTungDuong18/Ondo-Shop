@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "lint": "oxlint src scripts tests",
+    "preview": "vite preview",
+    "check:architecture": "node scripts/check-architecture.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "check": "npm run check:source && npm run check:architecture && npm run lint && npm test && npm run build",
+    "check:source": "node scripts/check-source.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.0",

@@ -1,0 +1,18 @@
+import { configureAuthRepository, createAuthUseCases } from '../application/services/authService';
+import { configureCategoryRepository, createCategoryUseCases } from '../application/services/categoryService';
+import { configureChatRepository } from '../application/services/chatService';
+import { configureOrderRepository, createOrderUseCases } from '../application/services/orderService';
+import { configureProductRepository, createProductUseCases } from '../application/services/productService';
+import { configureSessionRepository } from '../application/services/session';
+import { sessionRepository } from '../infrastructure/auth/sessionRepository';
+import { chatRepository } from '../infrastructure/chat/chatRepository';
+import { authRepository } from '../infrastructure/repositories/auth.service';
+import { categoryRepository } from '../infrastructure/repositories/category.service';
+import { orderRepository } from '../infrastructure/repositories/order.service';
+import { productRepository } from '../infrastructure/repositories/product.service';
+configureSessionRepository(sessionRepository);
+configureAuthRepository(createAuthUseCases(authRepository));
+configureProductRepository(createProductUseCases(productRepository));
+configureCategoryRepository(createCategoryUseCases(categoryRepository));
+configureOrderRepository(createOrderUseCases(orderRepository));
+configureChatRepository(chatRepository);

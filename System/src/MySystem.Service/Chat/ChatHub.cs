@@ -1,73 +1,28 @@
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-
 namespace MySystem.Service.Chat;
-
-/// <summary>
-/// Hub SignalR đóng vai trò làm cổng kết nối socket.
-/// Nằm ở tầng Service để cấu trúc code đồng bộ với ChatService.
-/// </summary>
-public class ChatHub : Hub
+[Authorize]
+public class ChatHub(IChatService chat) : Hub
 {
-    private readonly IChatService _chatService;
-    private readonly ILogger<ChatHub> _logger;
-
-    public ChatHub(IChatService chatService, ILogger<ChatHub> logger)
-    {
-        _chatService = chatService;
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Nhận tin nhắn chat chung và ủy thác cho service gửi đi.
-    /// </summary>
-    public async Task SendMessage(string user, string message)
-    {
-        await _chatService.SendGeneralMessage(user, message);
-    }
-
-    /// <summary>
-    /// Nhận tin nhắn chat riêng và ủy thác cho service gửi đi.
-    /// </summary>
-    public async Task SendPrivateMessage(string targetUser, string message)
-    {
-        var senderUser = _chatService.GetUsernameByConnectionId(Context.ConnectionId);
-        if (string.IsNullOrEmpty(senderUser))
-        {
-            _logger.LogWarning("SignalR [Hub Warning] Không tìm thấy kết nối người gửi: {ConnectionId}", Context.ConnectionId);
-            return;
-        }
-
-        await _chatService.SendPrivateMessage(senderUser, targetUser, message);
-    }
-
-    /// <summary>
-    /// Kích hoạt khi Client kết nối thành công.
-    /// </summary>
+    private Guid UserId => Guid.TryParse(Context.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
+        ? id : throw new HubException("Vui lòng đăng nhập để chat.");
+    public Task Sync() => chat.Sync(UserId, Context.ConnectionId);
+    public Task SendMessage(string target, string message) => chat.Send(UserId, target, message);
+    public Task CreateRoom(string name) => chat.CreateRoom(UserId, name);
+    public Task JoinRoom(string code) => chat.JoinRoom(UserId, code);
+    public Task RequestFriend(string targetId) => chat.RequestFriend(UserId, ParseId(targetId));
+    public Task AcceptFriend(string requesterId) => chat.RespondFriend(UserId, ParseId(requesterId), true);
+    public Task DeclineFriend(string requesterId) => chat.RespondFriend(UserId, ParseId(requesterId), false);
+    private static Guid ParseId(string value) => Guid.TryParse(value, out var id) ? id : throw new HubException("Người dùng không hợp lệ.");
     public override async Task OnConnectedAsync()
     {
-        var httpContext = Context.GetHttpContext();
-        var username = httpContext?.Request.Query["username"].ToString()?.Trim();
-
-        if (string.IsNullOrEmpty(username))
-        {
-            _logger.LogWarning("SignalR [Hub Aborted] Thiếu tham số username: {ConnectionId}", Context.ConnectionId);
-            Context.Abort();
-            return;
-        }
-
-        await _chatService.RegisterConnection(username, Context.ConnectionId);
+        await chat.Connect(UserId, Context.ConnectionId);
         await base.OnConnectedAsync();
     }
-
-    /// <summary>
-    /// Kích hoạt khi Client đóng kết nối.
-    /// </summary>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await _chatService.RemoveConnection(Context.ConnectionId);
+        await chat.Disconnect(Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 }

@@ -53,6 +53,11 @@ public static class JwtExtensions
                 {
                     OnMessageReceived = context =>
                     {
+                        if (context.Request.Path.StartsWithSegments("/hubs/chat")
+                            && context.Request.Query.TryGetValue("access_token", out var hubToken))
+                        {
+                            context.Token = hubToken.ToString();
+                        }
                         // Ưu tiên đọc token từ Authorization Header
                         // Nếu không có, fallback đọc từ Cookie accessToken
                         if (string.IsNullOrWhiteSpace(context.Token)

@@ -120,6 +120,7 @@ try
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
+    await ChatSchema.EnsureAsync(dbContext);
     await DatabaseSeeder.SeedAsync(dbContext);
 }
 catch (Exception ex)

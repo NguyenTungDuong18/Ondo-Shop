@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Infrastructure\PersistentChat.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MySystem.Service\MySystem.Service.csproj" />
     <ProjectReference Include="..\MySystem.Repository\MySystem.Repository.csproj" />
   </ItemGroup>
