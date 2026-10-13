@@ -1,45 +1,37 @@
+﻿using System.Text.Json;
 namespace MySystem.Repository.Entities;
 
-public class ChatParticipant
+public static class ChatRecordType
 {
-    public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+    public const string Participant = "participant";
+    public const string Room = "room";
+    public const string Membership = "membership";
+    public const string Friendship = "friendship";
+    public const string Message = "message";
 }
 
-public class ChatRoom
+// One row per message/relation, never an ever-growing JSON array for a conversation.
+public class ChatRecord
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = string.Empty;
-    public string InviteCode { get; set; } = string.Empty;
-    public DateTime InviteExpiresAt { get; set; }
-}
-
-public class ChatRoomMember
-{
-    public Guid RoomId { get; set; }
-    public ChatRoom Room { get; set; } = null!;
-    public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
-}
-
-public class ChatFriendship
-{
-    public Guid RequesterId { get; set; }
-    public User Requester { get; set; } = null!;
-    public Guid RecipientId { get; set; }
-    public User Recipient { get; set; } = null!;
-    public bool Accepted { get; set; }
-}
-
-public class ChatEntry
-{
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid SenderId { get; set; }
-    public User Sender { get; set; } = null!;
-    public Guid? ReceiverId { get; set; }
-    public User? Receiver { get; set; }
+    public string Type { get; set; } = string.Empty;
+    public string? IdentityKey { get; set; }
+    public Guid? UserId { get; set; }
+    public User? User { get; set; }
+    public Guid? PeerId { get; set; }
+    public User? Peer { get; set; }
     public Guid? RoomId { get; set; }
-    public ChatRoom? Room { get; set; }
-    public string Text { get; set; } = string.Empty;
-    public DateTime SentAt { get; set; } = DateTime.UtcNow;
+    public ChatRecord? Room { get; set; }
+    public string? Status { get; set; }
+    public string? InviteCode { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int SchemaVersion { get; set; } = 1;
+    public string Data { get; set; } = "{}";
+    public string ReadText(string key)
+    {
+        using var json = JsonDocument.Parse(Data);
+        return json.RootElement.TryGetProperty(key, out var value) ? value.GetString() ?? "" : "";
+    }
+    public static string PairKey(Guid a, Guid b) => string.CompareOrdinal(a.ToString(), b.ToString()) < 0 ? $"{a}:{b}" : $"{b}:{a}";
 }

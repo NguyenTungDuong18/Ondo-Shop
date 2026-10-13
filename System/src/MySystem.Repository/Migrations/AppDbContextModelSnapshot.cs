@@ -66,107 +66,76 @@ namespace MySystem.Repository.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatEntry", b =>
+            modelBuilder.Entity("MySystem.Repository.Entities.ChatRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ReceiverId")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IdentityKey")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("InviteCode")
+                        .HasMaxLength(6)
+                        .HasColumnType("character varying(6)");
+
+                    b.Property<Guid?>("PeerId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("RoomId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("SchemaVersion")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Status")
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
 
-                    b.Property<string>("Text")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)");
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("PeerId");
 
-                    b.HasIndex("RoomId", "SentAt");
-
-                    b.HasIndex("ReceiverId", "SenderId", "SentAt");
-
-                    b.ToTable("ChatEntry");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatFriendship", b =>
-                {
-                    b.Property<Guid>("RequesterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RecipientId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("RequesterId", "RecipientId");
-
-                    b.HasIndex("RecipientId");
-
-                    b.ToTable("ChatFriendship");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatParticipant", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("ChatParticipant");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatRoom", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("InviteCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
-
-                    b.Property<DateTime>("InviteExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InviteCode");
-
-                    b.ToTable("ChatRoom");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatRoomMember", b =>
-                {
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("RoomId", "UserId");
+                    b.HasIndex("RoomId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ChatRoomMember");
+                    b.HasIndex("Type", "IdentityKey")
+                        .IsUnique();
+
+                    b.HasIndex("Type", "InviteCode", "ExpiresAt");
+
+                    b.HasIndex("Type", "RoomId", "CreatedAt", "Id");
+
+                    b.HasIndex("Type", "UserId", "CreatedAt", "Id");
+
+                    b.HasIndex("Type", "PeerId", "UserId", "CreatedAt", "Id");
+
+                    b.ToTable("ChatRecords", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ChatRecords_Data", "jsonb_typeof(\"Data\") = 'object' AND \"SchemaVersion\" > 0");
+
+                            t.HasCheckConstraint("CK_ChatRecords_Type", "\"Type\" IN ('participant','room','membership','friendship','message')");
+                        });
                 });
 
             modelBuilder.Entity("MySystem.Repository.Entities.EmailVerification", b =>
@@ -653,74 +622,24 @@ namespace MySystem.Repository.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatEntry", b =>
+            modelBuilder.Entity("MySystem.Repository.Entities.ChatRecord", b =>
                 {
-                    b.HasOne("MySystem.Repository.Entities.User", "Receiver")
+                    b.HasOne("MySystem.Repository.Entities.User", "Peer")
                         .WithMany()
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("PeerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("MySystem.Repository.Entities.ChatRoom", "Room")
+                    b.HasOne("MySystem.Repository.Entities.ChatRecord", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("MySystem.Repository.Entities.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Room");
-
-                    b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatFriendship", b =>
-                {
-                    b.HasOne("MySystem.Repository.Entities.User", "Recipient")
-                        .WithMany()
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MySystem.Repository.Entities.User", "Requester")
-                        .WithMany()
-                        .HasForeignKey("RequesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Recipient");
-
-                    b.Navigation("Requester");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatParticipant", b =>
-                {
                     b.HasOne("MySystem.Repository.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MySystem.Repository.Entities.ChatRoomMember", b =>
-                {
-                    b.HasOne("MySystem.Repository.Entities.ChatRoom", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MySystem.Repository.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("Peer");
 
                     b.Navigation("Room");
 
