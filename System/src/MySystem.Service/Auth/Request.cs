@@ -20,10 +20,15 @@ public class Request
     /// </summary>
     public class UpdateProfileRequest
     {
+        [System.ComponentModel.DataAnnotations.Required, System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FullName { get; set; } = string.Empty;
+        [System.ComponentModel.DataAnnotations.Required, System.ComponentModel.DataAnnotations.EmailAddress,
+         System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Email { get; set; } = string.Empty;
+        [System.ComponentModel.DataAnnotations.StringLength(20),
+         System.ComponentModel.DataAnnotations.RegularExpression(@"^\+?[0-9() .\-]{7,20}$")]
         public string? PhoneNumber { get; set; }
-        public string? AvatarUrl { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
     }
     public class LoginRequest
     {

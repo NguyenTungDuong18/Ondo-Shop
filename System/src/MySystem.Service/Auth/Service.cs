@@ -377,10 +377,13 @@ public class Service : IService
         if (emailInUse)
             throw new BadRequestException("Email is already in use");
 
+        if (request.DateOfBirth > DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new BadRequestException("Ngày sinh không được nằm trong tương lai.", "INVALID_DATE_OF_BIRTH");
+
         user.FullName = fullName;
         user.Email = email;
         user.PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber.Trim();
-        user.AvatarUrl = string.IsNullOrWhiteSpace(request.AvatarUrl) ? null : request.AvatarUrl.Trim();
+        user.DateOfBirth = request.DateOfBirth;
         user.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();
@@ -444,7 +447,7 @@ public class Service : IService
         return rawRefreshToken;
     }
 
-    private static UserResponse MapUserToResponse(User user)
+    internal static UserResponse MapUserToResponse(User user)
     {
         return new UserResponse
         {
@@ -454,6 +457,7 @@ public class Service : IService
             FullName = user.FullName,
             Role = user.Role.ToString(),
             PhoneNumber = user.PhoneNumber,
+            DateOfBirth = user.DateOfBirth,
             AvatarUrl = user.AvatarUrl,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt

@@ -38,7 +38,7 @@ Tên solution/backend là **MySystem**; một số thành phần giao diện dù
 | Đơn hàng cá nhân | Danh sách phân trang và chi tiết đơn thuộc tài khoản | `/my-orders`, `/order/:id` |
 | Quản lý sản phẩm | Tạo, xem, sửa, xóa mềm, tìm kiếm/lọc, chọn danh mục | `/products` |
 | Dashboard | Tổng số sản phẩm, chỉ số của tập sản phẩm tải về, sản phẩm gần đây, thông tin backend | `/dashboard` |
-| Hồ sơ | Sửa họ tên, email, số điện thoại; hiển thị tài khoản và preview avatar | `/profile` |
+| Hồ sơ | Sửa họ tên, email, ngày sinh, số điện thoại; căn và thay avatar Cloudinary | `/profile` |
 | Chat người dùng | Phòng chung, kết bạn, chat riêng, tạo/vào phòng bằng mã, lịch sử và online/offline | `/test-chat` |
 | Tư vấn AI | Hỏi sản phẩm, nhận câu trả lời tăng dần và danh sách sản phẩm liên quan | Floating AI chat |
 | Danh mục quản trị | Tạo/sửa/xóa danh mục | Có API và adapter, chưa có trang quản trị danh mục riêng |
@@ -50,7 +50,7 @@ Tên solution/backend là **MySystem**; một số thành phần giao diện dù
 
 - `Checkout` hiện tạo đơn hàng; chưa có tích hợp cổng thanh toán, giao dịch thanh toán hay callback thanh toán.
 - Có entity ảnh/đánh giá sản phẩm nhưng chưa có controller upload ảnh hoặc CRUD đánh giá cho khách hàng.
-- Avatar chọn từ máy chỉ được preview bằng `blob:` URL; chưa upload lên server.
+- Avatar chỉ được tải lên khi xác nhận ảnh đã căn và bấm lưu; BE tự xóa ảnh cũ theo tài khoản.
 - Chat AI và chat người dùng là hai luồng độc lập. Lịch sử AI chưa được lưu vào `ChatRecords`.
 - `ChangePassword` và `UpdateUser` tồn tại trong Auth service nhưng chưa được expose thành endpoint tương ứng trong AuthController.
 - Tên `RagAdminController` không tự tạo quyền Admin: controller này hiện chưa có `[Authorize]`.
@@ -399,11 +399,11 @@ Mutation sản phẩm gọi API, hiển thị toast và invalidation React Query
 | Đơn cá nhân | `useMyOrdersPage` | `MyOrdersView` | Trang 10 đơn, đổi trang, danh sách rỗng/loading |
 | Chi tiết đơn | `useOrderDetailPage` | `OrderDetailView`, `OrderHeader`, `OrderItems`, `OrderShippingDetails`, `OrderTotals` | Tải theo ID; hiển thị hàng, địa chỉ, trạng thái, tổng tiền |
 | Dashboard | `useDashboardPage` | `DashboardView`, `InventorySummary`, `RecentProducts`, `BackendStatus` | Lấy tối đa 50 sản phẩm, tính active/low-stock/giá trị của tập đó |
-| Hồ sơ | `useProfilePage` | `ProfileView`, `ProfileForm`, `MemberCard` | Sửa tên/email/phone; lưu hoặc bỏ thay đổi; preview avatar |
+| Hồ sơ | `useProfilePage` | `ProfileView`, `ProfileForm`, `MemberCard`, `AvatarCropDialog` | Sửa tên/email/phone/ngày sinh; căn và thay avatar; lưu hoặc bỏ thay đổi |
 
 Dashboard dùng `totalCount` của API cho tổng số sản phẩm, nhưng active, stock thấp (`<=10`) và tổng giá trị chỉ tính từ các item đã tải. `BackendStatus` hiển thị thông tin endpoint, chưa phải health check độc lập.
 
-Avatar chọn từ máy dùng `URL.createObjectURL` và được thu hồi khi thay/unmount. Khi lưu, nếu URL là `blob:`, controller giữ avatar thật cũ thay vì gửi blob URL lên database.
+Avatar chọn từ máy được căn trong khung vuông có lưới 3×3 và đường tròn nội tiếp, xuất PNG 512×512 rồi gửi multipart khi lưu. Object URL chỉ dùng xem trước và được thu hồi khi thay/hủy/unmount. Không có file mới thì FE không gọi API avatar. Xem [hợp đồng và xử lý lỗi](System/src/CLOUDINARY_RAG.md#hồ-sơ-và-thay-avatar).
 
 ### 4.9 Feature chat ở FE
 
@@ -578,7 +578,7 @@ OTP phía BE:
 | Lưu trữ | `EmailVerifications` |
 | Sinh OTP | Hiện dùng `Random`, khác bộ sinh mật mã dùng cho mã phòng chat |
 
-`UpdateProfile` cập nhật tên/email/phone/avatar URL và UpdatedAt. Hiện đổi email không tạo lại quy trình xác thực email mới.
+`UpdateProfile` cập nhật tên/email/phone/ngày sinh và UpdatedAt, giữ nguyên avatar. `AvatarService` dùng media service xóa ảnh cũ rồi tải ảnh mới, lưu URL/publicId. Hiện đổi email không tạo lại quy trình xác thực email mới.
 
 ### 5.5 Product service
 
@@ -786,7 +786,8 @@ Base path là `/api/v1`. Bảng sau mô tả đúng attribute/controller hiện 
 | POST | `/refresh-token` | Refresh token hợp lệ | refreshToken trong body hoặc cookie | Xoay token và set cookies mới |
 | POST | `/logout` | Đăng nhập | Refresh token lấy từ cookie | Thu hồi refresh, xóa cookies |
 | GET | `/me` | Đăng nhập | UserId từ claim | Profile |
-| PUT | `/me` | Đăng nhập | fullName, email, phoneNumber?, avatarUrl? | Profile đã cập nhật |
+| PUT | `/me` | Đăng nhập | fullName, email, phoneNumber?, dateOfBirth? | Profile đã cập nhật |
+| PUT | `/me/avatar` | Đăng nhập | multipart: file | Xóa avatar cũ, tải ảnh mới và trả profile đã cập nhật |
 
 Ví dụ body đăng ký:
 

@@ -10,7 +10,9 @@ public class User : BaseEntity<Guid>
     public string FullName { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.Customer;
     public string? PhoneNumber { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string? AvatarUrl { get; set; }
+    public string? AvatarPublicId { get; set; }
     public bool IsVerify { get; set; } = false;
 
     // Navigation properties

@@ -11,6 +11,10 @@ using Category = MySystem.Repository.Entities.Category;
 using MySystem.Service;
 using MySystem.Service.Cache;
 using MySystem.Service.Mail;
+using CloudinaryDotNet;
+using Microsoft.Extensions.Options;
+using MySystem.Service.Media;
+using MySystem.Service.Exceptions;
 using AuthService = MySystem.Service.Auth;
 using ProductService = MySystem.Service.Product;
 using CategoryService = MySystem.Service.Category;
@@ -84,9 +88,27 @@ builder.Services.AddScoped<IMailService, MailService>();
 
 // Register Service Layer - Theo chuẩn HoaTheoMua
 builder.Services.AddScoped<AuthService.IService, AuthService.Service>();
+builder.Services.AddScoped<AuthService.AvatarService>();
 builder.Services.AddScoped<ProductService.IService, ProductService.Service>();
 builder.Services.AddScoped<CategoryService.IService, CategoryService.Service>();
 builder.Services.AddScoped<OrderService.IService, OrderService.Service>();
+
+// Cloudinary credentials are checked only when a media operation is requested.
+builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection(nameof(CloudinaryOptions)));
+builder.Services.AddSingleton<ICloudinaryUploadApi>(services =>
+{
+    var options = services.GetRequiredService<IOptions<CloudinaryOptions>>().Value;
+    if (string.IsNullOrWhiteSpace(options.CloudName) || string.IsNullOrWhiteSpace(options.ApiKey)
+        || string.IsNullOrWhiteSpace(options.ApiSecret))
+    {
+        throw new ServerException("Chưa cấu hình CloudinaryOptions.", "CLOUDINARY_NOT_CONFIGURED");
+    }
+
+    var cloudinary = new Cloudinary(new Account(options.CloudName, options.ApiKey, options.ApiSecret));
+    cloudinary.Api.Secure = true;
+    return cloudinary;
+});
+builder.Services.AddScoped<MySystem.Service.Media.IService, MySystem.Service.Media.Service>();
 
 // AutoMapper - Register all mapping profiles from Service assembly
 builder.Services.AddAutoMapper(cfg =>
@@ -120,6 +142,7 @@ try
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
+    await ProfileSchema.EnsureAsync(dbContext);
     await ChatSchema.EnsureAsync(dbContext);
     await DatabaseSeeder.SeedAsync(dbContext);
 }

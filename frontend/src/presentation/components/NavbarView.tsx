@@ -157,12 +157,16 @@ export function NavbarView({ model }: { model: ReturnType<typeof useNavbar> }) {
           ) : (
             <div className="relative" ref={userDropdownRef}>
               <button
-                onClick={() => setIsUserDropdownOpen((prev) => !prev)}
+                onClick={() => { setIsUserDropdownOpen(false); navigate('/profile'); }}
                 className="flex items-center gap-2 p-0.5 rounded-full transition-all cursor-pointer"
                 title="Member Profile"
               >
                 <LiquidAvatar name={user?.fullName || user?.username} avatarUrl={user?.avatarUrl} size={36} />
               </button>
+
+              <button type="button" aria-label="Open account menu" aria-expanded={isUserDropdownOpen}
+                onClick={() => setIsUserDropdownOpen(prev => !prev)}
+                className="absolute -right-4 top-1/2 -translate-y-1/2 cursor-pointer p-1 text-xs">▾</button>
 
               {isUserDropdownOpen && (
                 <div

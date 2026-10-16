@@ -36,7 +36,15 @@ export const authRepository: AuthRepository = {
   },
 
   async updateProfile(data: UpdateProfileRequest): Promise<ApiResponse<UserResponse>> {
-    const response = await axiosClient.put<ApiResponse<UserResponse>>('/api/v1/auth/me', data);
+    const { avatarFile, ...details } = data;
+    const response = await axiosClient.put<ApiResponse<UserResponse>>('/api/v1/auth/me', details);
+    if (avatarFile) {
+      const form = new FormData();
+      form.append('file', avatarFile);
+      const avatarResponse = await axiosClient.put<ApiResponse<UserResponse>>('/api/v1/auth/me/avatar', form,
+        { headers: { 'Content-Type': undefined } });
+      return avatarResponse.data;
+    }
     return response.data;
   },
 

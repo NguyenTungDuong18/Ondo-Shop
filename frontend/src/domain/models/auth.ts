@@ -5,6 +5,7 @@ export interface UserResponse {
   fullName: string;
   role: string;
   phoneNumber?: string | null;
+  dateOfBirth?: string | null;
   avatarUrl?: string | null;
   createdAt: string;
 }
@@ -13,7 +14,8 @@ export interface UpdateProfileRequest {
   fullName: string;
   email: string;
   phoneNumber?: string | null;
-  avatarUrl?: string | null;
+  dateOfBirth?: string | null;
+  avatarFile?: File;
 }
 
 export interface LoginRequest {

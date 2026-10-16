@@ -21,12 +21,12 @@ export function MemberCard({ avatarInputRef, handleAvatarFileChange, fullName, u
       type="file"
       ref={avatarInputRef}
       onChange={handleAvatarFileChange}
-      accept="image/*"
+      accept="image/jpeg,image/png,image/gif,image/webp"
       className="hidden"
     />
 
     {/* Avatar Container with Pen Edit Icon Badge */}
-    <div
+    <button type="button" aria-label="Chọn ảnh đại diện mới"
       onClick={() => avatarInputRef.current?.click()}
       className="relative cursor-pointer group mt-2"
       title="Click to change avatar photo"
@@ -54,7 +54,9 @@ export function MemberCard({ avatarInputRef, handleAvatarFileChange, fullName, u
       >
         <Pencil className="w-3.5 h-3.5" />
       </div>
-    </div>
+    </button>
+
+    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Chọn ảnh, căn trong hình tròn rồi bấm Save changes để lưu.</p>
 
     {/* User Identifiers */}
     <div className="space-y-1 w-full pt-1">

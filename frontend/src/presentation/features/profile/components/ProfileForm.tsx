@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import type { useProfilePage } from '../hooks/useProfilePage';
 type Props = {
+  dateOfBirth: NonNullable<ReturnType<typeof useProfilePage>>['dateOfBirth'];
+  setDateOfBirth: NonNullable<ReturnType<typeof useProfilePage>>['setDateOfBirth'];
   handleSaveProfile: NonNullable<ReturnType<typeof useProfilePage>>['handleSaveProfile'];
   fullNameRef: NonNullable<ReturnType<typeof useProfilePage>>['fullNameRef'];
   fullName: NonNullable<ReturnType<typeof useProfilePage>>['fullName'];
@@ -23,7 +25,7 @@ type Props = {
   handleDiscard: NonNullable<ReturnType<typeof useProfilePage>>['handleDiscard'];
   updateProfile: NonNullable<ReturnType<typeof useProfilePage>>['updateProfile'];
 };
-export function ProfileForm({ handleSaveProfile, fullNameRef, fullName, setFullName, emailRef, email, setEmail, phoneRef, phoneNumber, setPhoneNumber, user, isDirty, handleDiscard, updateProfile }: Props) {
+export function ProfileForm({ dateOfBirth, setDateOfBirth, handleSaveProfile, fullNameRef, fullName, setFullName, emailRef, email, setEmail, phoneRef, phoneNumber, setPhoneNumber, user, isDirty, handleDiscard, updateProfile }: Props) {
   return (<div className="lg:col-span-2">
     <form onSubmit={handleSaveProfile} className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -41,6 +43,7 @@ export function ProfileForm({ handleSaveProfile, fullNameRef, fullName, setFullN
             <input
               ref={fullNameRef}
               type="text"
+              aria-label="Full name" required maxLength={100}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className="w-full bg-transparent text-base font-bold focus:outline-none placeholder-zinc-300 dark:placeholder-zinc-600 font-sans pb-1 cursor-text"
@@ -65,6 +68,7 @@ export function ProfileForm({ handleSaveProfile, fullNameRef, fullName, setFullN
             <input
               ref={emailRef}
               type="email"
+              aria-label="Email address" required maxLength={100}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-transparent text-base font-bold focus:outline-none placeholder-zinc-300 dark:placeholder-zinc-600 font-sans pb-1 cursor-text truncate"
@@ -89,6 +93,7 @@ export function ProfileForm({ handleSaveProfile, fullNameRef, fullName, setFullN
             <input
               ref={phoneRef}
               type="tel"
+              aria-label="Phone number" maxLength={20} pattern="\+?[0-9\(\) .\-]{7,20}"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="w-full bg-transparent text-base font-bold focus:outline-none placeholder-zinc-300 dark:placeholder-zinc-600 font-sans pb-1 cursor-text"
@@ -98,6 +103,15 @@ export function ProfileForm({ handleSaveProfile, fullNameRef, fullName, setFullN
             <span className="underline-taper-line" />
           </div>
         </div>
+
+        <label className="p-5 rounded-2xl shadow-sm space-y-3" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--border-default)' }}>
+          <span className="flex items-center justify-between text-[10px] font-mono uppercase font-bold tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            Ngày sinh <Calendar className="w-4 h-4" />
+          </span>
+          <input type="date" aria-label="Ngày sinh" value={dateOfBirth} max={new Date().toLocaleDateString('en-CA')}
+            onChange={event => setDateOfBirth(event.target.value)} className="w-full bg-transparent text-base font-bold focus:outline-none"
+            style={{ color: 'var(--text-primary)' }} />
+        </label>
 
         {/* Card 4: Access Role */}
         <div className="p-5 rounded-2xl shadow-sm space-y-2"

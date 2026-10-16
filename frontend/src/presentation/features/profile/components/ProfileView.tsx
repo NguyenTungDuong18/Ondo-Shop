@@ -3,6 +3,7 @@ import {
 } from 'lucide-react';
 import { MemberCard } from './MemberCard';
 import { ProfileForm } from './ProfileForm';
+import { AvatarCropDialog } from './AvatarCropDialog';
 
 import type { useProfilePage } from '../hooks/useProfilePage';
 export function ProfileView({ model }: { model: ReturnType<typeof useProfilePage> }) {
@@ -30,13 +31,15 @@ export function ProfileView({ model }: { model: ReturnType<typeof useProfilePage
       </div>
 
       {/* Main Profile Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <fieldset disabled={updateProfile.isPending || !!model.cropSource} className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-w-0">
         {/* Left Column: Member Card Summary */}
         <MemberCard avatarInputRef={avatarInputRef} handleAvatarFileChange={handleAvatarFileChange} fullName={fullName} user={user} avatarUrl={avatarUrl} />
 
         {/* Right Column: Direct Click-to-Edit Parameter Cards */}
-        <ProfileForm handleSaveProfile={handleSaveProfile} fullNameRef={fullNameRef} fullName={fullName} setFullName={setFullName} emailRef={emailRef} email={email} setEmail={setEmail} phoneRef={phoneRef} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} user={user} isDirty={isDirty} handleDiscard={handleDiscard} updateProfile={updateProfile} />
-      </div>
+        <ProfileForm dateOfBirth={model.dateOfBirth} setDateOfBirth={model.setDateOfBirth} handleSaveProfile={handleSaveProfile} fullNameRef={fullNameRef} fullName={fullName} setFullName={setFullName} emailRef={emailRef} email={email} setEmail={setEmail} phoneRef={phoneRef} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} user={user} isDirty={isDirty} handleDiscard={handleDiscard} updateProfile={updateProfile} />
+      </fieldset>
+      {model.cropSource && <AvatarCropDialog key={model.cropSource} source={model.cropSource}
+        onCancel={() => model.setCropSource(null)} onConfirm={model.handleConfirmCrop} />}
     </div>
   );
 

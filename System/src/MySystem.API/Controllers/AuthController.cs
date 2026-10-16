@@ -161,6 +161,24 @@ public class AuthController : ControllerBase
         var user = await _authService.UpdateProfile(userId, request);
         return Ok(ApiResponseFactory.Base(user, true, "Profile updated successfully", HttpContext.TraceIdentifier));
     }
+    /// <summary>Thay avatar của tài khoản đang đăng nhập; server tự lấy publicId ảnh cũ.</summary>
+    [Authorize]
+    [EnableRateLimiting("api")]
+    [HttpPut("me/avatar")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(MySystem.Service.Media.Service.MaxImageSize + 64 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = MySystem.Service.Media.Service.MaxImageSize + 64 * 1024)]
+    public async Task<IActionResult> UpdateAvatar(
+        [FromForm] MySystem.Service.Media.Request.UploadImageRequest request,
+        [FromServices] AvatarService avatars, CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId))
+            throw new UnauthorizedException("Thông tin xác thực không hợp lệ.");
+        var user = await avatars.ReplaceAsync(userId, request.File, cancellationToken);
+        return Ok(ApiResponseFactory.Base(user, message: "Cập nhật ảnh đại diện thành công",
+            traceId: HttpContext.TraceIdentifier));
+    }
+
     private void SetTokenCookies(string accessToken, string refreshToken, DateTime expiresAt)
     {
         var cookieOptions = new CookieOptions

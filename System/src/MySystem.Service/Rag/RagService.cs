@@ -288,7 +288,7 @@ public class RagService : IRagService
         var client = _httpClientFactory.CreateClient("RagChat.Groq");
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _groqApiKey);
 
-        var response = await client.PostAsJsonAsync("/v1/chat/completions", new
+        var response = await client.PostAsJsonAsync("/openai/v1/chat/completions", new
         {
             model = _groqModel,
             messages = new[]
@@ -315,7 +315,7 @@ public class RagService : IRagService
         var client = _httpClientFactory.CreateClient("RagChat.Groq");
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _groqApiKey);
 
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/openai/v1/chat/completions")
         {
             Content = JsonContent.Create(new
             {
