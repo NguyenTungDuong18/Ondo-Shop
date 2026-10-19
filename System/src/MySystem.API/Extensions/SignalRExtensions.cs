@@ -38,9 +38,6 @@ public static class SignalRExtensions
             });
         });
 
-        // Đăng ký ChatService dạng Singleton để duy trì danh sách online và mapping connection
-        services.AddSingleton<IChatService, ChatService>();
-
         // 2. Đăng ký dịch vụ SignalR vào hệ thống DI Container.
         services.AddSignalR();
     }

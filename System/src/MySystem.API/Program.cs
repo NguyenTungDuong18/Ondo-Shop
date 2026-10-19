@@ -134,6 +134,25 @@ builder.Services.AddCors(options =>
 // Configure SignalR Services (CORS Policy & SignalR Hub registration)
 builder.Services.AddSignalRServices();
 
+// Khối kết nối: xác thực participant, theo dõi các tab online và khởi tạo state.
+builder.Services.AddChatConnectionServices();
+
+// Khối tin nhắn: kiểm tra quyền, lưu nội dung rồi phát tới người nhận.
+builder.Services.AddChatMessageServices();
+
+// Khối phòng: tạo mã mời, kiểm tra hạn mức và quản lý membership.
+builder.Services.AddChatRoomServices();
+
+// Khối kết bạn: gửi và xử lý lời mời bằng bộ khóa riêng theo cặp người dùng.
+builder.Services.AddChatFriendshipServices();
+
+// Khối lịch sử: truy vấn chỉ đọc có phân trang; API bind tùy chọn tại đây.
+builder.Services.AddChatHistoryServices();
+builder.Services.Configure<MySystem.Service.Chat.ChatOptions>(builder.Configuration.GetSection("Chat"));
+
+// Khối đồng bộ: dựng snapshot và gửi cập nhật sau khi nghiệp vụ hoàn tất.
+builder.Services.AddChatStateServices();
+
 var app = builder.Build();
 
 // Create the database when it is absent, then apply idempotent relational seed data.
